@@ -3,7 +3,7 @@ const router = express.Router();
 const stateController = require('../../controllers/statesController');
 
 // Route for all states and CONUS and OCONUS
-router.route('/states')
+router.route('/')
     .get(stateController.getAllStates);
 
 // Route for single state
@@ -25,5 +25,9 @@ router.route('/:state/population')
 // Route for state admission date
 router.route('/:state/admission')
     .get(stateController.getAdmission);
+
+// Route for state admission date
+router.route('/:state/funfact')
+    .get(stateController.getFunFact);
 
 module.exports = router;

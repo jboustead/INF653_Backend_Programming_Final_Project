@@ -6,26 +6,76 @@ const State = require('../model/State.js');
 
 // This function checks if the user would like all the state data in the GET request, or
 // if the user just wants the CONUS states or the OCONUS states. The response is in jason.
-const getAllStates = (req, res) => {
+const getAllStates = async (req, res) => {
     const contig = req.query.contig;
-    let states = data.states;
+    let states;
     if (contig === 'true') {
-        states = states.filter(state => state.code !== 'AK' && state.code !== 'HI');
+        states = data.states.filter(state => state.code !== 'AK' && state.code !== 'HI');
     } else if (contig === 'false') {
-        states = states.filter(state => state.code === 'AK' || state.code === 'HI');
+        states = data.states.filter(state => state.code === 'AK' || state.code === 'HI');
     } else {
         states = data.states;
     }
+
+    // This will get all the funfacts for all states
+    const mongoDB = await State.find({}, { _id: 0, code: 1, funfacts: 1 }).exec();
+    mongoDB.forEach((data) => {
+        const state = states.find(states => states.code === data.code);
+        if (state) {
+           state.funfacts = data.funfacts;
+        }
+    })
+
+    // Return the information to the user
     res.json(states);
 }
 
 // This function returns data specific to one state
-const getState = (req, res) => {
-    const state = data.states.find(state => state.code === req.params.code);
+const getState = async (req, res) => {
+    const state = data.states.find(state => state.code === req.params.code.toUpperCase());
     if (!state) {
-        return res.status(400).json({ "message": `State code ${req.params.code} not found`})
+        return res.status(400).json({ "message": `Invalid state abbreviation parameter`})
     }
+
+    // // This will get all the funfacts for all states
+    const mongoDB = await State.find({}, { _id: 0, code: 1, funfacts: 1 }).exec();
+    mongoDB.forEach((data) => {
+         if (data.code === state.code) {
+             state.funfacts = data.funfacts;
+         }
+     })
+
     res.json(state);
+}
+
+// This function returns a random fun fact about a state
+const getFunFact = async (req, res) => {
+    // Need to check whether a valid state was entered
+    const location = req.params.state.toUpperCase();
+    const results = data.states.find((item) => item.code === location);
+    const stateName = results.state;
+    console.log(results);
+    if (!results) {
+        res.status(404).json({"message": "Invalid state abbreviation parameter"})
+    }
+
+    const mongoDB = await State.find({}, { _id: 0, code: 1, funfacts: 1 }).exec();
+
+    let funfact;
+    for (const data of mongoDB) {
+        if (data.code === location) {
+            funfact = data.funfacts;
+            break;
+        }
+    }
+    if (!funfact) {
+        return res.json({"message": `No Fun Facts found for ${stateName}`}); 
+    }
+
+    const randomIndex = Math.floor(Math.random() * funfact.length);
+    const result = funfact[randomIndex];
+    const jsonObject = {"funfact": result};
+    res.json(jsonObject);
 }
 
 // This function returns the capital of the state
@@ -87,5 +137,6 @@ module.exports = {
     getCapital,
     getNickname,
     getPopulation,
-    getAdmission
+    getAdmission,
+    getFunFact
 }
