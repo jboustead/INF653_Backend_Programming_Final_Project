@@ -8,7 +8,7 @@ router.route('/')
 
 // Route for single state
  router.route('/:code')
-     .get(stateController.getState);
+     .get(stateController.getState)
 
  // Route for state capital
 router.route('/:state/capital')
@@ -28,6 +28,9 @@ router.route('/:state/admission')
 
 // Route for state admission date
 router.route('/:state/funfact')
-    .get(stateController.getFunFact);
+    .get(stateController.getFunFact)
+    .post(stateController.createFunFacts)
+    .patch(stateController.patchFunFacts)
+    .delete(stateController.deleteFunFacts);
 
 module.exports = router;
