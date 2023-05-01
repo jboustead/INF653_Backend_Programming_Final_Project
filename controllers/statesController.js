@@ -145,6 +145,10 @@ const createFunFacts = async (req, res) => {
 
     const mongoDB = await State.findOne({ code: requestCode }, { _id: 0, code: 1, funfacts: 1}).exec();
 
+    if (!mongoDB) {
+        return res.status(400).json({'message': 'Invalid state abbreviation parameter'});
+    }
+
     const currentFunFacts = mongoDB.funfacts;
     const requestedFunFacts = req.body.funfacts;
     const requestedFunFactsLength = requestedFunFacts.length;
