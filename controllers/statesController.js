@@ -136,14 +136,14 @@ const getAdmission = (req, res) => {
 
 const createFunFacts = async (req, res) => {
     if (!req?.body?.funfacts) {
-        return res.status(400).json({'message': 'funfact is required'});
+        return res.status(400).json({'message': 'State fun facts value required'});
     }
 
     const requestCode = req.params.state.toUpperCase();
 
     console.log(req.body.funfacts);
     if (!Array.isArray(req.body?.funfacts)) {
-        return res.status(400).json({'message': 'funfact must be an array'});
+        return res.status(400).json({'message': 'State fun facts value must be an array'});
     }
 
     const mongoDB = await State.findOne({ code: requestCode }, { _id: 0, code: 1, funfacts: 1}).exec();
