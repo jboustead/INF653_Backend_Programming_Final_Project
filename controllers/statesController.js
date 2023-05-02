@@ -228,6 +228,10 @@ const deleteFunFacts = async (req, res) => {
         return res.status(404).json({ "message": `No Fun Facts found for ${stateName}` })
     }
 
+    if (!currentFunFacts[requestedIndex]) {
+        return res.status(404).json({ "message": `No Fun Fact found at that index for ${stateName}` });
+    }
+
     currentFunFacts.splice(requestedIndex, 1);
 
     try {
