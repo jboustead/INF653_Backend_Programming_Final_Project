@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn');
 const PORT = process.env.PORT || 3000;
 
+
 // Connect to MongoDB
 connectDB();
 
