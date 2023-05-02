@@ -11,7 +11,6 @@ const PORT = process.env.PORT || 3500;
 // Connect to MongoDB
 connectDB();
 
-
 // Cross Origin Resource Sharing
 app.use(cors(corsOptions));
 
@@ -25,21 +24,31 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '/public')));
 
 // Routes
-//app.use('/', require('./views/index'));
 app.use('/states', require('./routes/api/states'));
 app.use('/states/:state', require('./routes/api/states'));
 
-// Catch 404
+// Serve the index.html file for valid URLs
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'views', 'index.html'));
+});
+
+// Serve the 404.html file for invalid URLs
 app.all('*', (req, res) => {
     res.status(404);
-    if (req.accepts('html')) {
-        res.sendFile(path.join(__dirname, 'views', '404.html'));
-    } else if (req.accepts('json')) {
-        res.json({"error": "404 Not Found"});
-    } else {
-        res.type('txt').send("404 Not Found");
-    }
+    res.sendFile(path.join(__dirname, 'public', 'views', '404.html'));
 });
+
+// Catch 404
+// app.all('*', (req, res) => {
+//     res.status(404);
+//     if (req.accepts('html')) {
+//         res.sendFile(path.join(__dirname, 'public', 'views', 'index.html'));
+//     } else if (req.accepts('json')) {
+//         res.json({"error": "404 Not Found"});
+//     } else {
+//         res.type('txt').send("404 Not Found");
+//     }
+// });
 
  mongoose.connection.once('open', () => {
      console.log('Connected to MongoDB');

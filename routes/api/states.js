@@ -3,7 +3,6 @@ const router = express.Router();
 const stateController = require('../../controllers/statesController');
 
 // Route for all states and CONUS and OCONUS
-
 router.route('/')
     .get(stateController.getAllStates);
 
