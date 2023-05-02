@@ -60,6 +60,10 @@ const getFunFact = async (req, res) => {
     const stateName = results.state;
     const mongoDB = await State.find({}, { _id: 0, code: 1, funfacts: 1 }).exec();
 
+    if (!mongoDB.funfact) {
+        return res.status(200).json({ "message": `No Fun Facts found for ${stateName}`});
+    }
+
     let funfact;
     for (const data of mongoDB) {
         if (data.code === location) {
@@ -67,9 +71,9 @@ const getFunFact = async (req, res) => {
             break;
         }
     }
-    if (!funfact) {
-        return res.json({"message": `No Fun Facts found for ${stateName}`});
-    }
+    // if (!funfact) {
+    //     return res.json({"message": `No Fun Facts found for ${stateName}`});
+    // }
 
     const randomIndex = Math.floor(Math.random() * funfact.length);
     const result = funfact[randomIndex];
