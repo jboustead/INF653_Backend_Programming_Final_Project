@@ -175,8 +175,8 @@ const createFunFacts = async (req, res) => {
 }
 
 const patchFunFacts = async (req, res) => {
-    if (!req?.body?.funfacts || !req.body?.index) {
-        return res.status(400).json({'message': 'funfact and index are required'});
+    if (!req.body?.index) {
+        return res.status(400).json({'message': 'State fun fact index value required'});
     }
 
     const requestCode = req.params.state.toUpperCase();
@@ -185,12 +185,16 @@ const patchFunFacts = async (req, res) => {
     const requestedIndex = req.body.index - 1;
     const newFunFacts = req.body.funfacts;
 
+    if (newFunFacts === "") {
+        return res.status(400).json({ "message": "State fun fact value required" });
+    }
+
     const mongoDB = await State.findOne({ code: requestCode }, { _id: 1, code: 1, funfacts: 1}).exec();
 
     const currentFunFacts = mongoDB.funfacts;
 
     if (!currentFunFacts[requestedIndex]) {
-        return res.status(404).json({ "message": `No Fun Fact found at that index for ${stateName}` });
+        return res.status(404).json({ "message": `No Fun Facts found for ${stateName}` });
     }
 
     currentFunFacts[requestedIndex] = newFunFacts;
