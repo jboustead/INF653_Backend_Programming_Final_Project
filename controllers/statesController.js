@@ -50,15 +50,14 @@ const getState = async (req, res) => {
 
 // This function returns a random fun fact about a state
 const getFunFact = async (req, res) => {
-    // Need to check whether a valid state was entered
     const location = req.params.state.toUpperCase();
     const results = data.states.find((item) => item.code === location);
-    const stateName = results.state;
     console.log(results);
     if (!results) {
-        res.status(404).json({"message": "Invalid state abbreviation parameter"})
+        return res.status(404).json({"message": "Invalid state abbreviation parameter"})
     }
 
+    const stateName = results.state;
     const mongoDB = await State.find({}, { _id: 0, code: 1, funfacts: 1 }).exec();
 
     let funfact;
