@@ -212,7 +212,7 @@ const patchFunFacts = async (req, res) => {
 
 const deleteFunFacts = async (req, res) => {
     if (!req.body?.index) {
-        return res.status(400).json({'message': 'index is required'});
+        return res.status(400).json({'message': 'State fun fact index value required'});
     }
 
     const requestCode = req.params.state.toUpperCase();
@@ -224,8 +224,8 @@ const deleteFunFacts = async (req, res) => {
 
     const currentFunFacts = mongoDB.funfacts;
 
-    if (!currentFunFacts[requestedIndex]) {
-        return res.status(404).json({ "message": `No Fun Fact found at that index for ${stateName}` });
+    if (currentFunFacts.length === 0) {
+        return res.status(404).json({ "message": `No Fun Facts found for ${stateName}` })
     }
 
     currentFunFacts.splice(requestedIndex, 1);
