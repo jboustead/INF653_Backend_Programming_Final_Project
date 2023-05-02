@@ -177,8 +177,9 @@ const patchFunFacts = async (req, res) => {
     const stateName = stateLocate.state;
     const requestedIndex = req.body.index - 1;
     const newFunFacts = req.body.funfact;
+    console.log(newFunFacts);
 
-    if (newFunFacts === "") {
+    if (!newFunFacts) {
         return res.status(400).json({ "message": "State fun fact value required" });
     }
 
@@ -188,11 +189,11 @@ const patchFunFacts = async (req, res) => {
     const currentFunFacts = mongoDB.funfacts;
 
     if (currentFunFacts.length === 0) {
-        return res.status(404).json({ "message": `No Fun Facts found for Arizona ${stateName}` })
+        return res.status(404).json({ "message": `No Fun Facts found for ${stateName}` })
     }
 
     if (!currentFunFacts[requestedIndex]) {
-        return res.status(404).json({ "message": `'No Fun Fact found at that index for ${stateName}` });
+        return res.status(404).json({ "message": `No Fun Fact found at that index for ${stateName}` });
     }
 
     currentFunFacts[requestedIndex] = newFunFacts;
