@@ -52,28 +52,18 @@ const getState = async (req, res) => {
 const getFunFact = async (req, res) => {
     const location = req.params.state.toUpperCase();
     const results = data.states.find((item) => item.code === location);
-    console.log(results);
+
     if (!results) {
         return res.status(404).json({"message": "Invalid state abbreviation parameter"})
     }
 
     const stateName = results.state;
-    const mongoDB = await State.find({}, { _id: 0, code: 1, funfacts: 1 }).exec();
+    const mongoDB = await State.find({code: location}, { _id: 0, code: 1, funfacts: 1 }).exec();
+    const funfact = mongoDB[0].funfacts;
 
-    if (!mongoDB.funfact) {
+    if (!funfact) {
         return res.status(200).json({ "message": `No Fun Facts found for ${stateName}`});
     }
-
-    let funfact;
-    for (const data of mongoDB) {
-        if (data.code === location) {
-            funfact = data.funfacts;
-            break;
-        }
-    }
-    // if (!funfact) {
-    //     return res.json({"message": `No Fun Facts found for ${stateName}`});
-    // }
 
     const randomIndex = Math.floor(Math.random() * funfact.length);
     const result = funfact[randomIndex];
@@ -141,7 +131,6 @@ const createFunFacts = async (req, res) => {
 
     const requestCode = req.params.state.toUpperCase();
 
-    console.log(req.body.funfacts);
     if (!Array.isArray(req.body?.funfacts)) {
         return res.status(400).json({'message': 'State fun facts value must be an array'});
     }
@@ -183,13 +172,14 @@ const patchFunFacts = async (req, res) => {
     const stateLocate = data.states.find((item) => item.code === requestCode);
     const stateName = stateLocate.state;
     const requestedIndex = req.body.index - 1;
-    const newFunFacts = req.body.funfacts;
+    const newFunFacts = req.body.funfact;
 
     if (newFunFacts === "") {
         return res.status(400).json({ "message": "State fun fact value required" });
     }
 
-    const mongoDB = await State.findOne({ code: requestCode }, { _id: 1, code: 1, funfacts: 1}).exec();
+    //const mongoDB = await State.findOne({ code: requestCode }, { _id: 1, code: 1, funfacts: 1}).exec();
+    const mongoDB = await State.findOne({ code: requestCode }).exec();
 
     const currentFunFacts = mongoDB.funfacts;
 
