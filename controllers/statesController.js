@@ -39,9 +39,8 @@ const getState = async (req, res) => {
     }
 
     const mongoDB = await State.find({ code: location }, { _id: 0, code: 1, funfacts: 1 }).exec();
-    console.log(mongoDB);
 
-    if (!mongoDB) {
+    if (!mongoDB.funfacts) {
         return res.status(200).json(state);
     } else {
         mongoDB.forEach((data) => {
@@ -188,8 +187,12 @@ const patchFunFacts = async (req, res) => {
 
     const currentFunFacts = mongoDB.funfacts;
 
+    if (currentFunFacts.length === 0) {
+        return res.status(404).json({ "message": `No Fun Facts found for Arizona ${stateName}` })
+    }
+
     if (!currentFunFacts[requestedIndex]) {
-        return res.status(404).json({ "message": `No Fun Facts found for ${stateName}` });
+        return res.status(404).json({ "message": `'No Fun Fact found at that index for ${stateName}` });
     }
 
     currentFunFacts[requestedIndex] = newFunFacts;
