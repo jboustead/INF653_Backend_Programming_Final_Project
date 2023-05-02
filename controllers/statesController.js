@@ -32,20 +32,25 @@ const getAllStates = async (req, res) => {
 
 // This function returns data specific to one state
 const getState = async (req, res) => {
+    const location = req.params.code;
     const state = data.states.find(state => state.code === req.params.code.toUpperCase());
     if (!state) {
         return res.status(400).json({ "message": `Invalid state abbreviation parameter`})
     }
 
-    // // This will get all the funfacts for all states
-    const mongoDB = await State.find({}, { _id: 0, code: 1, funfacts: 1 }).exec();
-    mongoDB.forEach((data) => {
-         if (data.code === state.code) {
-             state.funfacts = data.funfacts;
-         }
-     })
+    const mongoDB = await State.find({ code: location }, { _id: 0, code: 1, funfacts: 1 }).exec();
+    console.log(mongoDB);
 
-    res.json(state);
+    if (!mongoDB) {
+        return res.status(200).json(state);
+    } else {
+        mongoDB.forEach((data) => {
+            if (data.code === state.code) {
+                state.funfacts = data.funfacts;
+            }
+        })
+        res.json(state);
+    }
 }
 
 // This function returns a random fun fact about a state
@@ -61,7 +66,7 @@ const getFunFact = async (req, res) => {
     const mongoDB = await State.find({code: location}, { _id: 0, code: 1, funfacts: 1 }).exec();
     const funfact = mongoDB[0].funfacts;
 
-    if (!funfact) {
+    if (!funfact || funfact.length === 0) {
         return res.status(200).json({ "message": `No Fun Facts found for ${stateName}`});
     }
 
