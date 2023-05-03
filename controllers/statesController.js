@@ -38,7 +38,8 @@ const getState = async (req, res) => {
         return res.status(400).json({ "message": `Invalid state abbreviation parameter`})
     }
 
-    const mongoDB = await State.findOne({ code: location }, { _id: 0, code: 1, funfacts: 1 }).exec();
+    // const mongoDB = await State.findOne({ code: location }, { _id: 0, code: 1, funfacts: 1 }).exec();
+    const mongoDB = await State.findOne({ code: location }).exec();
     const newFunFacts = mongoDB.funfacts;
 
     if (newFunFacts.length !== 0) {
