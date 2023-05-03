@@ -41,12 +41,11 @@ const getState = async (req, res) => {
     const mongoDB = await State.findOne({ code: location }, { _id: 0, code: 1, funfacts: 1 }).exec();
     const newFunFacts = mongoDB.funfacts;
 
-    if (newFunFacts.length === 0) {
-        return res.status(200).json(state);
-    } else {
+    if (newFunFacts.length !== 0) {
         state['funfacts'] = newFunFacts;
-        return res.status(200).json(state);
     }
+
+    return res.status(200).json(state);
 }
 
 // This function returns a random fun fact about a state
