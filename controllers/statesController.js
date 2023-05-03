@@ -154,10 +154,13 @@ const createFunFacts = async (req, res) => {
 
     try {
         const result = await State.findOneAndUpdate(
+        // const result = await State.create(
             { code: requestCode },
-            { funfacts: currentFunFacts },
+            //{ funfacts: currentFunFacts }
+            { $set: {__v: mongoDB.__v}, funfacts: currentFunFacts },
             {new: true}
         );
+        console.log(result);
         res.status(201).json(result);
     } catch (err) {
         console.log(err);
