@@ -44,9 +44,15 @@ const getState = async (req, res) => {
 
     if (newFunFacts.length !== 0) {
         state['funfacts'] = newFunFacts;
+        return res.status(200).json(state);
+    } else {
+        // Delete the "funfacts" key if it exists
+        if (state.hasOwnProperty('funfacts')) {
+            delete state.funfacts;
+        }
+        // Send the "state" object in the response to the user
+        res.status(200).json(state);
     }
-
-    return res.status(200).json(state);
 }
 
 // This function returns a random fun fact about a state
