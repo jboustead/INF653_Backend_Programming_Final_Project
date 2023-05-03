@@ -166,7 +166,6 @@ const createFunFacts = async (req, res) => {
             { $set: {__v: mongoDB.__v}, funfacts: currentFunFacts },
             {new: true}
         );
-        console.log(result);
         res.status(201).json(result);
     } catch (err) {
         console.log(err);
@@ -183,7 +182,6 @@ const patchFunFacts = async (req, res) => {
     const stateName = stateLocate.state;
     const requestedIndex = req.body.index - 1;
     const newFunFacts = req.body.funfact;
-    console.log(newFunFacts);
 
     if (!newFunFacts) {
         return res.status(400).json({ "message": "State fun fact value required" });
